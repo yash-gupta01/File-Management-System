@@ -1,28 +1,19 @@
 // src/App.js
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchFiles } from './store/fileSlice';
-import FileUpload from './components/FileUpload';
-import FileList from './components/FileList';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import FileViewPage from './pages/FileViewPage';
+import { CssBaseline } from '@mui/material';
 
 const App = () => {
-  const dispatch = useDispatch();
-  const files = useSelector((state) => state.files.list);
-
-  useEffect(() => {
-    dispatch(fetchFiles());
-  }, [dispatch]);
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">File Management</h1>
-
-      {/* File Upload */}
-      <FileUpload />
-
-      {/* File List */}
-      <FileList files={files} />
-    </div>
+    <Router>
+      <CssBaseline />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/file-view/:fileId" element={<FileViewPage />} />
+      </Routes>
+    </Router>
   );
 };
 
