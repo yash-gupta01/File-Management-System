@@ -9,7 +9,7 @@ const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
 
-  const allowedFileTypes = ['text/plain', 'image/jpeg', 'image/png', 'application/json'];
+  const allowedFileTypes = ['text/plain', 'image/jpeg', 'image/png', 'application/json', 'application/pdf'];
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -38,7 +38,7 @@ const FileUpload = () => {
         type="file"
         onChange={handleFileChange}
         fullWidth
-        inputProps={{ accept: '.txt,.jpg,.png,.json' }}
+        inputProps={{ accept: '.txt,.jpg,.png,.json,.pdf' }}
       />
       {error && <Typography color="error">{error}</Typography>}
       <Button

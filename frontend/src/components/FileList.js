@@ -1,38 +1,70 @@
 // src/components/FileList.js
-import React from 'react';
+import React, { useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFiles } from '../store/fileSlice';
+import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Button, Grid, Typography } from '@mui/material';
+import FileDownload from './FileDownload';
+import { convertBytes } from '../util/util';
 
-const FileList = ({ files }) => {
+const FileList = () => {
+  const dispatch = useDispatch();
+  const files = useSelector((state) => state.files.list);
   const navigate = useNavigate();
 
-  const handleFileClick = (fileId) => {
-    navigate(`/file-view/${fileId}`);
-  };
+  useEffect(() => {
+    dispatch(fetchFiles());
+  }, [dispatch]);
+
+  const columns = [
+    { field: 'title', headerName: 'Title', flex: 2 },
+    {
+      field: 'size',
+      headerName: 'File Size',
+      flex: 1,
+      renderCell: (params) => convertBytes(params.row.size),
+    },
+    {
+      field: 'view',
+      headerName: 'View',
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/view', { state: { fileId: params.row.id, fileName: params.row.title } })}
+        >
+          View
+        </Button>
+      ),
+    },
+    {
+      field: 'download',
+      headerName: 'Download',
+      flex: 1,
+      renderCell: (params) => (
+        <FileDownload fileId={params.row.id} fileName={params.row.title} />
+      ),
+    },
+  ];
+
+  const rows = files.map((file) => ({
+    id: file._id,
+    title: file.originalName,
+    size: file.size,
+  }));
 
   return (
-    <Grid container spacing={2}>
-      {files.map((file) => (
-        <Grid item xs={12} sm={6} md={4} key={file._id}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">{file.originalName}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                {file.fileType} - {file.size} MB
-              </Typography>
-              <Button
-                onClick={() => handleFileClick(file._id)}
-                color="primary"
-                variant="contained"
-                style={{ marginTop: '10px' }}
-              >
-                View File
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+    <div className="p-4">
+      <h2>My Files</h2>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={8}
+        className="max-h-[50vh]"
+      />
+    </div>
   );
 };
 

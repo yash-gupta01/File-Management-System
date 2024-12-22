@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFiles } from '../store/fileSlice';
 import FileList from '../components/FileList';
 import FileUpload from '../components/FileUpload';
-import { Button, Container, Typography, Paper } from '@mui/material';
+import { Container, Typography, Paper } from '@mui/material';
 
 const HomePage = () => {
   const dispatch = useDispatch();

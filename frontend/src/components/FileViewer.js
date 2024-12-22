@@ -1,48 +1,78 @@
-// src/pages/FileViewPage.js
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Typography, Paper } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
-const FileViewPage = () => {
-  const { fileId } = useParams();
+const FileViewer = () => {
+  const location = useLocation();
+  const { fileId, fileName } = location.state || {};
+  console.log(fileId,fileName);
   const [fileContent, setFileContent] = useState(null);
-  const [error, setError] = useState('');
+  const [fileType, setFileType] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchFileContent = async () => {
+    const downloadFile = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/file-content/${fileId}`);
-        setFileContent(response.data);
+        setLoading(true);
+        setError(null);
+
+        const response = await axios.get(`http://localhost:3000/api/download/${fileId}`, {
+          responseType: 'blob',
+        });
+
+        const contentType = response.headers['content-type'];
+        setFileType(contentType);
+
+        const fileBlob = new Blob([response.data], { type: contentType });
+
+        if (contentType.includes('text') || contentType === 'application/json') {
+          const text = await fileBlob.text();
+          setFileContent(
+          <span className=' border-2 border-gray-600'>
+            <p>{text}</p>
+            </span>);
+        } else if (contentType.includes('image')) {
+          const url = URL.createObjectURL(fileBlob);
+          setFileContent(<img src={url} alt={fileName} style={{ width: '90%',  height: '90%', objectFit: 'contain', border: '2px' }}
+            />);
+        } else if (contentType === 'application/pdf') {
+          const url = URL.createObjectURL(fileBlob);
+          setFileContent(
+            <iframe
+            src={url}
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+            title="PDF Viewer"
+          ></iframe>
+        );
+        } else {
+          setFileContent(<p>Unsupported file type: {contentType}</p>);
+        }
       } catch (err) {
-        setError('Error fetching file content');
+        console.error('Error downloading file:', err);
+        setError('Failed to load file. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
-    fetchFileContent();
-  }, [fileId]);
 
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
-  }
+    downloadFile();
+  }, [fileId, fileName]);
 
   return (
-    <Container>
-      <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
-        <Typography variant="h5">File Content</Typography>
-        {fileContent ? (
-          fileContent.type === 'text' || fileContent.type === 'json' ? (
-            <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(fileContent.content, null, 2)}
-            </Typography>
-          ) : (
-            <img src={`data:image/jpeg;base64,${fileContent.content}`} alt="File content" style={{ width: '100%' }} />
-          )
-        ) : (
-          <Typography variant="body1">Loading...</Typography>
-        )}
-      </Paper>
-    </Container>
+    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+    <h2>File: {fileName}</h2>
+    {loading ? (
+      <p>Loading...</p>
+    ) : error ? (
+      <p style={{ color: 'red' }}>{error}</p>
+    ) : (
+      <div className="file-content" style={{ marginTop: '1rem' }}>
+        {fileContent}
+      </div>
+    )}
+  </div>  
   );
 };
 
-export default FileViewPage;
+export default FileViewer;
