@@ -1,12 +1,16 @@
 # File Management System
 ## Overview
-This project is a File Management System that allows users to upload, list, and download files through a REST API and a user-friendly React-based frontend. It uses Node.js, Express, Sequelize (PostgreSQL), React, and Docker to ensure modularity, maintainability, and scalability.
+This project is a File Management System that allows users to upload, list, view and download files through a REST API and a user-friendly React-based frontend. It uses Node.js, Express, MongoDB, React, and Docker to ensure modularity, maintainability, and scalability.
 ## Features
 ### File Upload
 Users can upload files through the frontend, which stores them on the server.
+Currently limited to these formats : [ .jpg, .png, .pdf, .json, .text]
 
 ### File Listing
 Lists all uploaded files with details like name and size.
+
+### File View
+Allows users to view any file listed on the server.
 
 ### File Download
 Allows users to download any file listed on the server.
