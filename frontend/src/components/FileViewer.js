@@ -7,7 +7,6 @@ const FileViewer = () => {
   const { fileId, fileName } = location.state || {};
   console.log(fileId,fileName);
   const [fileContent, setFileContent] = useState(null);
-  const [fileType, setFileType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,7 +21,7 @@ const FileViewer = () => {
         });
 
         const contentType = response.headers['content-type'];
-        setFileType(contentType);
+
 
         const fileBlob = new Blob([response.data], { type: contentType });
 

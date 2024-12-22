@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 const FileDownload = ({ fileId, fileName }) => {
   const handleFileDownload = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/download/${fileId}`, {
+      const response = await axios.get(`http://localhost:4000/api/download/${fileId}`, {
         responseType: 'blob',
       });
 

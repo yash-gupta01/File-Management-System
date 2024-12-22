@@ -6,11 +6,11 @@ const cors = require('cors');
 connectToDatabase();
 
 const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3001' }));
+app.use(cors({ origin: 'http://localhost:3000' }));
 // Routes
 app.use('/api', fileRoutes);
 

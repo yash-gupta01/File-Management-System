@@ -3,13 +3,13 @@ import axios from 'axios';
 
 // Fetch files from the server
 export const fetchFiles = createAsyncThunk('files/fetchFiles', async () => {
-  const response = await axios.get('http://localhost:3000/api/files');
+  const response = await axios.get('http://localhost:4000/api/files');
   return response.data;
 });
 
 // Upload a file
 export const uploadFile = createAsyncThunk('files/uploadFile', async (formData, { dispatch }) => {
-  await axios.post('http://localhost:3000/api/upload', formData, {
+  await axios.post('http://localhost:4000/api/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
