@@ -39,6 +39,7 @@ docker-compose up --build
 ### Run frontend
 ```
 cd frontend
+npm install
 npm run start
 ```
 #### Backend API: http://localhost:4000
